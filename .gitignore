@@ -170,3 +170,6 @@ pyvenv.cfg
 songs.csv
 
 secrets.py
+
+# MacOS files
+.DS_Store
