@@ -1,7 +1,8 @@
-from typing import NamedTuple
 import csv
+from typing import NamedTuple
+
 from last_fm import get_top_tracks
-from spotify import get_playlist_id, create_playlist, update_playlist
+from spotify import create_playlist, get_playlist_id, update_playlist
 
 
 class User(NamedTuple):

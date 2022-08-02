@@ -1,9 +1,11 @@
-import spotipy
 import csv
+from secrets import SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_USERNAME
+
+import spotipy
 from googletrans import Translator
 from thefuzz import fuzz
+
 from literal_matches import literal_matches
-from secrets import SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_USERNAME
 
 SCOPE = "playlist-modify-public"
 

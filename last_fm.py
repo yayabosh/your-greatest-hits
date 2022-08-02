@@ -1,5 +1,6 @@
-import requests
 from secrets import LAST_FM_API_KEY
+
+import requests
 
 NUM_PAGES = 4
 
