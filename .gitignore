@@ -168,3 +168,5 @@ include/
 pyvenv.cfg
 
 songs.csv
+
+secrets.py

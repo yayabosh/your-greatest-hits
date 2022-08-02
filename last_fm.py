@@ -1,7 +1,5 @@
 import requests
-
-LAST_FM_API_KEY = "YOUR_LAST_FM_API_KEY"
-LAST_FM_SHARED_SECRET = "YOUR_LAST_FM_SHARED_SECRET"
+from secrets import LAST_FM_API_KEY
 
 NUM_PAGES = 4
 
