@@ -1,4 +1,5 @@
 import csv
+import logging
 from secrets import SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_USERNAME
 
 import spotipy
@@ -99,6 +100,7 @@ def get_track_ids():
                     track_id = get_track_id(song, translate_artist(artist))
                     track_ids.append(track_id)
                 except RuntimeError:
+                    logging.warning(str(e))
                     print(str(e))
 
     return track_ids
