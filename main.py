@@ -18,9 +18,8 @@ class User(NamedTuple):
 
 
 def setup_logging():
-    logging.basicConfig(filename="greatest_hits.log", level=logging.INFO)
     logging.basicConfig(
-        filename="",
+        filename="app.log",
         format="%(asctime)s %(message)s",
         datefmt="%m/%d/%Y %I:%M:%S %p",
         level=logging.INFO,
@@ -62,7 +61,7 @@ def main():
         # Update the playlist with the top tracks for the user
         update_playlist(playlist_id)
 
-    logging.info("Finished!")
+    logging.info(f"Finished for {user.name}!")
 
 
 if __name__ == "__main__":
