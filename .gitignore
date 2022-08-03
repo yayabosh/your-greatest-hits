@@ -169,7 +169,7 @@ pyvenv.cfg
 
 songs.csv
 
-secrets.py
+secret.py
 
 # MacOS files
 .DS_Store

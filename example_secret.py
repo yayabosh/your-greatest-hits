@@ -12,7 +12,7 @@ _|"""""|_|"""""|_|"""""|_|"""""| {======|_|"""""|_|"""""|
   \/_/ /_/   \/_____/   \/_/\/_/   \/____/      \/_/  \/_/   \/_____/ 
                                                                       
 ⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️
-RENAME THIS FILE TO secrets.py FOR THE API KEYS TO WORK!
+RENAME THIS FILE TO secret.py FOR THE API KEYS TO WORK!
 
 Then, fill out your API information below.
 '''
