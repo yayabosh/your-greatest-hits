@@ -104,18 +104,33 @@ def get_track_ids():
     return track_ids
 
 
+def get_old_track_ids(playlist_id):
+    old_track_ids = set()
+    results = sp.user_playlist_tracks(SPOTIFY_USERNAME, playlist_id)
+    tracks = results["items"]
+    while results["next"]:
+        results = sp.next(results)
+        tracks.extend(results["items"])
+
+    for track in tracks:
+        old_track_ids.add(track["track"]["id"])
+
+    return old_track_ids
+
+
 def update_playlist(playlist_id):
-    track_ids = get_track_ids()
-    if len(track_ids) <= 100:
-        sp.user_playlist_replace_tracks(SPOTIFY_USERNAME, playlist_id, track_ids)
+    current_track_ids = get_track_ids()
+    if len(current_track_ids) <= 100:
+        sp.user_playlist_replace_tracks(
+            SPOTIFY_USERNAME, playlist_id, current_track_ids
+        )
         return
 
-    for i in range(0, len(track_ids), 100):
-        sp.user_playlist_remove_all_occurrences_of_tracks(
-            SPOTIFY_USERNAME, playlist_id, track_ids[i : i + 100]
-        )
+    old_track_ids = get_old_track_ids(playlist_id)
+    new_track_ids = list(set(current_track_ids) - old_track_ids)
 
-    for i in range(0, len(track_ids), 100):
-        sp.user_playlist_add_tracks(
-            SPOTIFY_USERNAME, playlist_id, track_ids[i : i + 100]
-        )
+    if new_track_ids:
+        for i in range(0, len(new_track_ids), 100):
+            sp.user_playlist_add_tracks(
+                SPOTIFY_USERNAME, playlist_id, new_track_ids[i : i + 100]
+            )
