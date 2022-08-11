@@ -11,6 +11,7 @@ SCOPE = "playlist-modify-public"
 
 translator = Translator()
 
+errors = {}
 
 token = spotipy.util.prompt_for_user_token(
     SPOTIFY_USERNAME,
@@ -50,6 +51,7 @@ def get_track_id(song, artist):
     results = sp.search(q=f"{song} {artist}", limit=5, type="track")
 
     if results["tracks"]["total"] == 0:
+        errors[(song, artist)] = "not_found"
         raise RuntimeError(
             f"😐 Error: Spotify couldn't find {song} by {artist}. Stop pirating music! 😐"
         )
@@ -61,6 +63,7 @@ def get_track_id(song, artist):
         ):
             return item["id"]
 
+    errors[(song, artist)] = "not_close_enough_match"
     raise RuntimeError(f"🧐 Error: not a close enough match for {song} by {artist} 🧐")
 
 
@@ -101,6 +104,7 @@ def get_track_ids():
                 except RuntimeError:
                     print(str(e))
 
+    print(errors)
     return track_ids
 
 
