@@ -104,7 +104,6 @@ def get_track_ids():
                 except RuntimeError:
                     print(str(e))
 
-    print(errors)
     return track_ids
 
 
