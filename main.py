@@ -1,17 +1,20 @@
 import csv  # For parsing `tables/users.csv``
 from typing import NamedTuple  # For creating a named tuple representing a user
 
+from gmail import send_email
 from last_fm import get_top_tracks  # For getting the top tracks for a user
 from spotify import (
     create_playlist,
     get_playlist_id,
     update_playlist,
+    errors,
 )  # For creating and updating a playlist
 
 
 # A named tuple representing a user in the `users.csv` table
 class User(NamedTuple):
     name: str  # Example: "abosh"
+    email: str  # Example: "abosh@email.com"
     last_fm_username: str  # Example: "yayabosh"
     threshold: int  # Example: 100
     moniker: str  # Example: "Abosh Has", so the Spotify playlist will be named "Songs {Abosh Has} Listened To 100+ Times"
@@ -27,6 +30,7 @@ with open("tables/users.csv", newline="") as f:
         users.append(
             User(
                 row["name"],
+                row["email"],
                 row["last_fm_username"],
                 int(row["threshold"]),
                 row["moniker"],
@@ -46,3 +50,5 @@ for user in users:
 
     # Update the playlist with the top tracks for the user
     update_playlist(playlist_id)
+
+    send_email(user, playlist_id, errors)
