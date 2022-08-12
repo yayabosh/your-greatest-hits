@@ -12,6 +12,7 @@ SCOPE = "playlist-modify-public"
 translator = Translator()
 
 errors = {}
+differences = []
 
 token = spotipy.util.prompt_for_user_token(
     SPOTIFY_USERNAME,
@@ -96,13 +97,14 @@ def get_track_ids():
             track_id = ""
             try:
                 track_id = get_track_id(song, artist)
-                track_ids.append(track_id)
             except RuntimeError as e:
                 try:
                     track_id = get_track_id(song, translate_artist(artist))
-                    track_ids.append(track_id)
                 except RuntimeError:
                     print(str(e))
+
+            if track_id != "":
+                track_ids.append(track_id)
 
     return track_ids
 
@@ -130,9 +132,10 @@ def update_playlist(playlist_id):
         return
 
     old_track_ids = get_old_track_ids(playlist_id)
-    new_track_ids = list(set(current_track_ids) - old_track_ids)
+    difference = set(current_track_ids) - old_track_ids
 
-    if new_track_ids:
+    if len(difference) > 0:
+        new_track_ids = [track for track in current_track_ids if track in difference]
         for i in range(0, len(new_track_ids), 100):
             sp.user_playlist_add_tracks(
                 SPOTIFY_USERNAME, playlist_id, new_track_ids[i : i + 100]
