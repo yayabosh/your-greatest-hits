@@ -23,7 +23,7 @@ class User(NamedTuple):
 # Get users from users.csv and create a list of User objects
 users = []
 with open("tables/users.csv", newline="") as f:
-    # Parse each line in `users.csv`, ignoring lines that start with a #
+    # Parse each line in users.csv, ignoring lines that start with a #
     reader = csv.DictReader(row for row in f if not row.startswith("#"))
     for row in reader:
         # Create a User object for each row in `users.csv` and add it to the users list
