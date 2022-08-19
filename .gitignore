@@ -174,3 +174,5 @@ secret.py
 
 # MacOS files
 .DS_Store
+
+.vscode
