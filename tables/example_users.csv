@@ -1,5 +1,3 @@
-name,last_fm_username,threshold,moniker
-abosh,yayabosh,100,I’ve
-prerak,preraku,30,Prerak Has
-# Add more users here...
-# Lines starting with # are ignored
+name,email,last_fm_username,threshold,moniker
+abosh,example@example.com,yayabosh,100,I’ve
+prerak,example@example.com,preraku,"60,40",Prerak Has
