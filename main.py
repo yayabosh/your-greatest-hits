@@ -10,6 +10,7 @@ from spotify import (
     errors,
 )  # For creating and updating a playlist
 
+DEBUG = True  # Debug mode prevents emails from being sent to users
 
 # A named tuple representing a user in the users.csv table
 class User(NamedTuple):
@@ -66,4 +67,5 @@ for user in users:
         playlist_id_map[playlist_id] = (threshold, new_tracks)
 
     # Send an update email to the user
-    send_email(user, playlist_id_map, errors)
+    if DEBUG == False:
+        send_email(user, playlist_id_map, errors)
