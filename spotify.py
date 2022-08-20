@@ -12,7 +12,6 @@ SCOPE = "playlist-modify-public"
 translator = Translator()
 
 errors = {}
-differences = []
 
 token = spotipy.util.prompt_for_user_token(
     SPOTIFY_USERNAME,
@@ -24,8 +23,8 @@ token = spotipy.util.prompt_for_user_token(
 sp = spotipy.Spotify(auth=token)
 
 
-def get_playlist_id(user):
-    playlist_name = f"Songs {user.moniker} Played {user.threshold}+ Times"
+def get_playlist_id(user, threshold):
+    playlist_name = f"Songs {user.moniker} Played {threshold}+ Times"
     playlists = sp.user_playlists(SPOTIFY_USERNAME)["items"]
     for playlist in playlists:
         if playlist["name"] == playlist_name:
@@ -34,15 +33,14 @@ def get_playlist_id(user):
     return None
 
 
-def create_playlist(user):
-    playlist_name = f"Songs {user.moniker} Played {user.threshold}+ Times"
-    playlist_description = f"This playlist auto-updates w data from last.fm. \
-    Go to github.com/yayabosh/your-greatest-hits to make ur own playlist!"
+def create_playlist(user, threshold):
+    playlist_name = f"Songs {user.moniker} Played {threshold}+ Times"
+    playlist_description = f"This playlist auto-updates w data from last.fm. Go to github.com/yayabosh/your-greatest-hits to make ur own playlist!"
 
     sp.user_playlist_create(
         SPOTIFY_USERNAME, name=playlist_name, description=playlist_description
     )
-    return get_playlist_id(user)
+    return get_playlist_id(user, threshold)
 
 
 def get_track_id(song, artist):
@@ -86,15 +84,15 @@ def translate_artist(artist):
     return artist
 
 
-def get_track_ids():
-    track_ids = []
+def get_current_tracks():
+    track_ids_to_songs = {}
     with open("tables/songs.csv", newline="") as f:
         reader = csv.DictReader(f)
 
         for row in reader:
             song = row["song"]
             artist = row["artist"]
-            track_id = ""
+            track_id = None
             try:
                 track_id = get_track_id(song, artist)
             except RuntimeError as e:
@@ -103,10 +101,10 @@ def get_track_ids():
                 except RuntimeError:
                     print(str(e))
 
-            if track_id != "":
-                track_ids.append(track_id)
+            if track_id is not None:
+                track_ids_to_songs[track_id] = (song, artist)
 
-    return track_ids
+    return track_ids_to_songs
 
 
 def get_old_track_ids(playlist_id):
@@ -124,19 +122,21 @@ def get_old_track_ids(playlist_id):
 
 
 def update_playlist(playlist_id):
-    current_track_ids = get_track_ids()
-    if len(current_track_ids) <= 100:
-        sp.user_playlist_replace_tracks(
-            SPOTIFY_USERNAME, playlist_id, current_track_ids
-        )
-        return
+    current_tracks = get_current_tracks()
 
+    current_track_ids = current_tracks.keys()
     old_track_ids = get_old_track_ids(playlist_id)
-    difference = set(current_track_ids) - old_track_ids
 
-    if len(difference) > 0:
-        new_track_ids = [track for track in current_track_ids if track in difference]
-        for i in range(0, len(new_track_ids), 100):
-            sp.user_playlist_add_tracks(
-                SPOTIFY_USERNAME, playlist_id, new_track_ids[i : i + 100]
-            )
+    difference = set(current_track_ids) - old_track_ids
+    if len(difference) == 0:
+        return []
+
+    new_track_ids = [
+        track_id for track_id in current_track_ids if track_id in difference
+    ]
+    for i in range(0, len(new_track_ids), 100):
+        sp.user_playlist_add_tracks(
+            SPOTIFY_USERNAME, playlist_id, new_track_ids[i : i + 100]
+        )
+
+    return [current_tracks[track_id] for track_id in difference]
