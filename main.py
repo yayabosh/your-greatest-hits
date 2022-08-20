@@ -2,7 +2,7 @@ import csv  # For parsing `tables/users.csv``
 from typing import List, NamedTuple  # For creating a named tuple representing a user
 
 from gmail import send_email  # For sending an email to a user
-from last_fm import get_top_tracks  # For getting the top tracks for a user
+from last_fm import get_tracks_above_threshold  # For getting the top tracks for a user
 from spotify import (
     create_playlist,
     get_playlist_id,
@@ -41,19 +41,29 @@ with open("tables/users.csv", newline="") as f:
 # For each user in the users list, get their top tracks (tracks above their
 # threshold) from Last.fm and create a playlist for them in Spotify
 for user in users:
+    # A mapping from the playlist ID for a user's threshold to the songs in the
+    # playlist.
+    # Example: {[id: 1]: (threshold: 100, [song1, song2, song3]),
+    #           [id: 2]: (threshold: 200, [song1, song2, song3])}
     playlist_id_map = {}
+    # Iterate through each threshold for the user and create or update a playlist
+    # for them
     for threshold in user.thresholds:
-        # Get the top tracks for the user
-        get_top_tracks(user, threshold)
+        # Get the tracks of the user played more than the given threshold
+        get_tracks_above_threshold(user, threshold)
         # Get the playlist ID for the user's playlist, if it exists
         playlist_id = get_playlist_id(user, threshold)
         # If the playlist doesn't exist, create it
         if playlist_id is None:
             playlist_id = create_playlist(user, threshold)
 
-        # Update the playlist with the top tracks for the user
+        # Update the playlist with the the tracks played more than the given
+        # threshold
         new_tracks = update_playlist(playlist_id)
 
+        # Map the playlist ID to a tuple containing the threshold and the songs
+        # in the playlist. This will be used when sending an email to the user.
         playlist_id_map[playlist_id] = (threshold, new_tracks)
 
+    # Send an update email to the user
     send_email(user, playlist_id_map, errors)
