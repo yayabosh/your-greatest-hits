@@ -1,13 +1,14 @@
-import datetime
-from pydoc import plain
+import datetime  # For getting the current date
 
+# For sending emails
 import smtplib
-import ssl
+import ssl  
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 from secret import GMAIL_APP_PASSWORD, GMAIL_SENDER, GMAIL_PERSONAL_EMAIL
 
+# Get today's date
 today = datetime.datetime.now()
 
 
@@ -35,6 +36,7 @@ def line_break():
     return "<br>"
 
 
+# Sends an email to the user containing an update for all the user's playlists.
 def send_email(user, playlist_id_map, errors):
     print(f"📤 Sending email to {user.name} at {user.email}...")
 
