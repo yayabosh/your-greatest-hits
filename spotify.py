@@ -1,18 +1,22 @@
 import csv  # For parsing tables/songs.csv
 
-import spotipy  
-from googletrans import Translator
-from thefuzz import fuzz
+import spotipy  # For calling the Spotify API
+from googletrans import Translator  # For translating artist names
+from thefuzz import fuzz  # For string matching song and artist names
 
-from literal_matches import literal_matches
+from literal_matches import literal_matches  # For checking songs against edge cases
 from secret import SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_USERNAME
 
-SCOPE = "playlist-modify-public"
+errors = {}  # For logging errors if Spotify can't find a song
 
+# Initialize the Google Translate object
 translator = Translator()
 
-errors = {}
+# This allows for using the Spotify API to modify a public playlist.
+# Read more: https://developer.spotify.com/documentation/general/guides/authorization/scopes/
+SCOPE = "playlist-modify-public"
 
+# Initialize the Spotify object that will be used to make API calls
 token = spotipy.util.prompt_for_user_token(
     SPOTIFY_USERNAME,
     SCOPE,
@@ -23,6 +27,8 @@ token = spotipy.util.prompt_for_user_token(
 sp = spotipy.Spotify(auth=token)
 
 
+# Returns the Spotify playlist ID of the playlist containing the user's songs
+# played above the given threshold. Returns None if the playlist doesn't exist.
 def get_playlist_id(user, threshold):
     playlist_name = f"Songs {user.moniker} Played {threshold}+ Times"
     playlists = sp.user_playlists(SPOTIFY_USERNAME)["items"]
@@ -33,6 +39,8 @@ def get_playlist_id(user, threshold):
     return None
 
 
+# Creates a new playlist containing the user's songs played above the given
+# threshold. Returns the playlist ID of the new playlist.
 def create_playlist(user, threshold):
     playlist_name = f"Songs {user.moniker} Played {threshold}+ Times"
     playlist_description = f"This playlist auto-updates w data from last.fm. Go to github.com/yayabosh/your-greatest-hits to make ur own playlist!"
@@ -43,6 +51,7 @@ def create_playlist(user, threshold):
     return get_playlist_id(user, threshold)
 
 
+# Returns the Spotify track ID of the song with the given name and artist.
 def get_track_id(song, artist):
     if (song, artist) in literal_matches:
         return literal_matches[(song, artist)]
@@ -66,6 +75,7 @@ def get_track_id(song, artist):
     raise RuntimeError(f"🧐 Error: not a close enough match for {song} by {artist} 🧐")
 
 
+# Translates the given artist name to English. Returns the English name.
 def translate_artist(artist):
     detection = translator.detect(artist)
     if detection.lang == "en":
@@ -84,6 +94,7 @@ def translate_artist(artist):
     return artist
 
 
+# Returns a dictionary mapping Spotify track IDs to song names and artists.
 def get_current_tracks():
     track_ids_to_songs = {}
     with open("tables/songs.csv", newline="") as f:
@@ -107,6 +118,7 @@ def get_current_tracks():
     return track_ids_to_songs
 
 
+# Returns a set of Spotify track IDs in the given playlist.
 def get_old_track_ids(playlist_id):
     old_track_ids = set()
     results = sp.user_playlist_tracks(SPOTIFY_USERNAME, playlist_id)
@@ -121,6 +133,8 @@ def get_old_track_ids(playlist_id):
     return old_track_ids
 
 
+# Updates the playlist with the given playlist ID with all new songs played
+# above the threshold for the playlist.
 def update_playlist(playlist_id):
     current_tracks = get_current_tracks()
 
