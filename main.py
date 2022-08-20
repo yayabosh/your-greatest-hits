@@ -1,4 +1,4 @@
-import csv  # For parsing `tables/users.csv``
+import csv  # For parsing tables/users.csv
 from typing import List, NamedTuple  # For creating a named tuple representing a user
 
 from gmail import send_email  # For sending an email to a user
@@ -11,7 +11,7 @@ from spotify import (
 )  # For creating and updating a playlist
 
 
-# A named tuple representing a user in the `users.csv` table
+# A named tuple representing a user in the users.csv table
 class User(NamedTuple):
     name: str  # Example: "abosh"
     email: str  # Example: "abosh@email.com"

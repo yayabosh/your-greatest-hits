@@ -1,6 +1,6 @@
-import csv
+import csv  # For parsing tables/songs.csv
 
-import spotipy
+import spotipy  
 from googletrans import Translator
 from thefuzz import fuzz
 
