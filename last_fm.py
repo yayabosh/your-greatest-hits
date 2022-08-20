@@ -5,7 +5,7 @@ from secret import LAST_FM_API_KEY
 NUM_PAGES = 4
 
 
-def get_top_tracks(user):
+def get_top_tracks(user, threshold):
     last_fm_payload = {
         "api_key": LAST_FM_API_KEY,
         "method": "user.getTopTracks",
@@ -22,5 +22,5 @@ def get_top_tracks(user):
         f.write("song,artist\n")
         for page in pages:
             for song in page:
-                if int(song["playcount"]) >= user.threshold:
+                if int(song["playcount"]) >= threshold:
                     f.write(f'"{song["name"]}","{song["artist"]["name"]}"\n')
