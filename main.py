@@ -67,5 +67,5 @@ for user in users:
         playlist_id_map[playlist_id] = (threshold, new_tracks)
 
     # Send an update email to the user
-    if DEBUG == False:
+    if not DEBUG:
         send_email(user, playlist_id_map, errors)
