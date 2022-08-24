@@ -2,7 +2,7 @@ import datetime  # For getting the current date
 
 # For sending emails
 import smtplib
-import ssl  
+import ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
@@ -48,7 +48,7 @@ def send_email(user, playlist_id_map, errors):
     message[
         "Subject"
     ] = f"Your Greatest Hits - {today.strftime('%B')} {today.strftime('%Y')}"
-    message["From"] = sender_email
+    message["From"] = f"Abosh Upadhyaya <{sender_email}>"
     message["To"] = receiver_email
 
     MULTIPLE_PLAYLISTS = len(playlist_id_map) > 1
