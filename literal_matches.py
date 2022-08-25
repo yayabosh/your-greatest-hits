@@ -33,4 +33,8 @@ literal_matches = {
         "童話",
         "光良",
     ): "6NCylXeJcHOI908PjZDFcg",  # Last.fm translates this artist’s name, so Spotify can’t find it
+    (
+        'My Boy (Twin Fantasy)',
+        "Car Seat Headrest"
+    ): "4zQXB3sZrpT2gA3rgYl3sY"
 }
