@@ -167,10 +167,12 @@ include/
 
 pyvenv.cfg
 
-songs.csv
+tables/songs.csv
 tables/users.csv
+tables/playlists.csv
 
 secret.py
+playlists.py
 
 # MacOS files
 .DS_Store
