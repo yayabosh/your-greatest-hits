@@ -33,8 +33,13 @@ literal_matches = {
         "童話",
         "光良",
     ): "6NCylXeJcHOI908PjZDFcg",  # Last.fm translates this artist’s name, so Spotify can’t find it
+    ("My Boy (Twin Fantasy)", "Car Seat Headrest"): "4zQXB3sZrpT2gA3rgYl3sY",
     (
-        'My Boy (Twin Fantasy)',
-        "Car Seat Headrest"
-    ): "4zQXB3sZrpT2gA3rgYl3sY"
+        "Prayer in C - Robin Schulz Radio Edit",
+        "Lilly Wood & The Prick",
+    ): "5fnA9mkIfScSqHIpeDyvck",
+    (
+        "The Birds Part 1",
+        "The Weeknd",
+    ): "323ujVhfSg16TlRK0PB5JY"
 }
