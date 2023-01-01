@@ -178,3 +178,5 @@ playlists.py
 .DS_Store
 
 .vscode
+
+*.pickle
