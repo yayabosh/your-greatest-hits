@@ -41,5 +41,13 @@ literal_matches = {
     (
         "The Birds Part 1",
         "The Weeknd",
-    ): "323ujVhfSg16TlRK0PB5JY"
+    ): "323ujVhfSg16TlRK0PB5JY",
+    (
+        "S.II.S (Soul To Soul)",
+        "S.E.S.",
+    ): "5jM2ITcV8idbVEjhgm52Dd",
+    (
+        "BRASILIAN SKIES",
+        "高中正義"
+    ): "3bMc9oRaUWnojCrYTUXXcQ"
 }
