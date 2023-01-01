@@ -1,4 +1,5 @@
 import csv  # For parsing tables/songs.csv
+import pickle  # For saving and loading the playlists
 
 import spotipy  # For calling the Spotify API
 from googletrans import Translator  # For translating artist names
@@ -7,7 +8,7 @@ from thefuzz import fuzz  # For string matching song and artist names
 from literal_matches import literal_matches  # For checking songs against edge cases
 from secret import SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_USERNAME
 
-errors = {}  # For logging errors if Spotify can't find a song
+errors = set()  # For logging errors if Spotify can't find a song
 
 # Initialize the Google Translate object
 translator = Translator()
@@ -30,6 +31,13 @@ sp = spotipy.Spotify(auth=token)
 # Returns the Spotify playlist ID of the playlist containing the user's songs
 # played above the given threshold. Returns None if the playlist doesn't exist.
 def get_playlist_id(user, threshold):
+    with open("playlists.pickle", "rb") as f:
+        usernames_to_playlists = pickle.load(f)
+
+        playlist_id = usernames_to_playlists[user.last_fm_username][threshold]
+        if playlist_id:
+            return playlist_id
+
     playlist_name = f"Songs {user.moniker} Played {threshold}+ Times"
     playlists = sp.user_playlists(SPOTIFY_USERNAME)["items"]
     for playlist in playlists:
@@ -37,6 +45,22 @@ def get_playlist_id(user, threshold):
             return playlist["id"]
 
     return None
+
+
+def save_playlist_id(user, threshold, playlist_id):
+    try:
+        with open("playlists.pickle", "rb") as f:
+            usernames_to_playlists = pickle.load(f)
+    except (OSError, IOError):
+        usernames_to_playlists = {}
+
+    if user.last_fm_username not in usernames_to_playlists:
+        usernames_to_playlists[user.last_fm_username] = {}
+
+    usernames_to_playlists[user.last_fm_username][threshold] = playlist_id
+
+    with open("playlists.pickle", "wb") as f:
+        pickle.dump(usernames_to_playlists, f, protocol=pickle.HIGHEST_PROTOCOL)
 
 
 # Creates a new playlist containing the user's songs played above the given
@@ -48,7 +72,15 @@ def create_playlist(user, threshold):
     sp.user_playlist_create(
         SPOTIFY_USERNAME, name=playlist_name, description=playlist_description
     )
-    return get_playlist_id(user, threshold)
+
+    playlist_id = get_playlist_id(user, threshold)
+
+    if not playlist_id:
+        raise RuntimeError(f"😱 Error: couldn't find the playlist {playlist_name} 😱")
+
+    save_playlist_id(user, threshold, playlist_id)
+
+    return playlist_id
 
 
 # Returns the Spotify track ID of the song with the given name and artist.
@@ -59,7 +91,6 @@ def get_track_id(song, artist):
     results = sp.search(q=f"{song} {artist}", limit=5, type="track")
 
     if results["tracks"]["total"] == 0:
-        errors[(song, artist)] = "not_found"
         raise RuntimeError(
             f"😐 Error: Spotify couldn't find {song} by {artist}. Stop pirating music! 😐"
         )
@@ -71,7 +102,6 @@ def get_track_id(song, artist):
         ):
             return item["id"]
 
-    errors[(song, artist)] = "not_close_enough_match"
     raise RuntimeError(f"🧐 Error: not a close enough match for {song} by {artist} 🧐")
 
 
@@ -111,6 +141,7 @@ def get_current_tracks():
                     track_id = get_track_id(song, translate_artist(artist))
                 except RuntimeError:
                     print(str(e))
+                    errors.add((song, artist))
 
             if track_id is not None:
                 track_ids_to_songs[track_id] = (song, artist)
