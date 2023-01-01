@@ -36,6 +36,10 @@ def line_break():
     return "<br>"
 
 
+def playlist_id_to_link(playlist_id):
+    return f"https://open.spotify.com/playlist/{playlist_id}"
+
+
 # Sends an email to the user containing an update for all the user's playlists.
 def send_email(user, playlist_id_map, errors):
     print(f"📤 Sending email to {user.name} at {user.email}...")
@@ -55,10 +59,28 @@ def send_email(user, playlist_id_map, errors):
     PLURAL_PLAYLISTS = "playlists" if MULTIPLE_PLAYLISTS else "playlist"
     plain_text = f"""
     """
+    months_since = 3
+    months_updated = months_since - user.month_joined
     html = f"""
 <html>
   <body>
     <p>Hey {user.name},</p>
+    <p>
+      This is a new project I’m working on. It creates Spotify playlists for you based on your listening history.
+      Specifically, it creates a playlist for songs you’ve played over a certain threshold amount of times.
+    </p>
+    <p>
+      There’s currently {bold("26")} people (+6 this past month!) I’m debuting this with. Hopefully, I’ll be able to get more people on board soon.
+      Let your friends or family know if you think this is cool! All I need is their Spotify username, Last.fm username, and email address.
+      I promise I’ll never spam anyone. I’ll only send emails like this one once a month.
+    </p>
+    <p>
+      The cool thing about this project is that it’s completely automated, and it’ll last forever.
+      This is the third one ever, and see you next month!
+    </p>
+    <p>
+      ---------------------------------
+    </p>
     <p>Your monthly update for {bold("Your Greatest Hits")} is ready! 🥳</p>
     <p>
       You currently have {bold(f"{len(playlist_id_map)} {PLURAL_PLAYLISTS}")}
@@ -68,48 +90,34 @@ def send_email(user, playlist_id_map, errors):
     <p>
       🎶 {bold(underline("Update Summary"))}
       {line_break()}
-      {bold(link("Songs You’ve Listened To 100+ Times", 
-      ""))}
+      {get_update_summary(playlist_id_map)}
+    </p>
+    {line_break()}
+    <p>
+      😵 {bold(f"{underline('Errors')} — {italicize('Is it too late now to say sorry?')}")}
       {line_break()}
-      Woohoo, you’ve got updates!" 🔥
-      {line_break()}
-      The following songs were added:
-      {line_break()}
-      - “{bold("Famous")}” by {bold("Kanye West")}
-      {line_break()}
-      - “{bold("Massive")}” by {bold("Drake")}
+      {get_non_added_songs(errors, PLURAL_PLAYLISTS)}
     </p>
     <p>
-      {bold(link("Songs You’ve Listened To 60+ Times", 
-      ""))}
+      😔 {bold(f"Error #1: {italicize('I listened to a song but it wasn’t added.')}")}
       {line_break()}
-      No new additions this month. 😔 But there's always next month!
-      {line_break()}
-    </p>
-    <p>
-      🙋‍♀️ {bold(underline("Errors"))} - {italicize("Is it too late now to say sorry?")}
-      {line_break()}
-      😔 {bold("I listened to a song but it wasn’t added.")}
-      {line_break()}
-      This month, these songs couldn’t be added to your {PLURAL_PLAYLISTS}:
-      {line_break()}
-      - “{bold("Nice Guys")}” by {bold("Chester See, Kevjumba & Ryan Higa")}
-    </p>
-    <p>
-      Spotify usually can’t find songs for one of these reasons:
+      This usually happens for one of the following reasons:
       {line_break()}
       1. {bold("You listen to foreign music")} (good for you!) which Spotify’s 
          catalog doesn't have, or has but under a different song or artist name.
          This usually happens since Spotify likes to translate artist names to
          English but Last.fm doesn’t.
       {line_break()}
-      2. {bold("You listen to pirated music")} ({strikethrough("good for you!")}).
+      2. {bold("You listen to pirated music")} ({strikethrough("good for you!")})
+         that isn’t on Spotify.
       {line_break()}
-      3. {bold("I messed up.")} If a song really is on Spotify but it couldn’t
-         be found, let me know and I’ll fix this for you!
+      3. {bold("You listen to music through YouTube, SoundCloud, or something else that formats the song title or artist name differently than Spotify.")}
+      {line_break()}
+      4. {bold("I messed up.")} If a song really is on Spotify but it couldn’t
+         be found, for any reason, let me know and I’ll fix this for you!
     </p>
     <p>
-      🤨 {bold("A song that I didn’t listen to got added.")}
+      🤨 {bold(f"Error #2: {italicize('A song that I didn’t listen to got added.')}")}
       {line_break()}
       If there’s any songs in your playlist that are different from the song you
       listened to, for any of the following reasons, let me know and I’ll try
@@ -118,19 +126,26 @@ def send_email(user, playlist_id_map, errors):
       1. {bold("A song got added that you didn't listen to that many times.")}
          Like “{bold("Meh")}” by {bold("Playboi Carti")} being added when you
          really only listened to “{bold("@ MEH")}” by {bold("Playboi Carti")}.
+         It's like a musical homophone! This error usually occurs because the
+         Spotify API sucks at searching for songs.
       {line_break()}
       2. {bold("The right song and artist got added, but for the wrong album.")}
          Like “{bold("INDUSTRY BABY")}” by {bold("Lil Nas X")} getting added,
          but off some random {bold("Kidz Bop")} album.
+         This error also usually occurs because the Spotify API sucks at searching for
+         songs.
       {line_break()}
       3. {bold("The right song and artist got added, but on an album you just don’t like.")}
          Like a song got added from the deluxe or remastered version of an album,
-         but you want it to be from the non-deluxe or remastered version.
+         but you want it to be from the non-deluxe or remastered version. Or you
+         just want the album version since you hate looking at the single version's
+         album art. This error is just humans being picky, but I love it!
     </p>
+    {line_break()}
     <p>
-      Finally, some extra stats about your time with Your Greatest Hits:
+      {bold(f"{bold(underline('Your Time with Your Greatest Hits'))} — {italicize('stats and extras!')}")}
       {line_break()}
-      - Your {PLURAL_PLAYLISTS} have been updating for {bold("1 month")}!
+      - Your {PLURAL_PLAYLISTS} {"has" if PLURAL_PLAYLISTS == "playlist" else "have"} been updating for {months_updated} {"months" if months_updated > 1 else "month"}!
         {bold("You’ve been here since the beginning")}! ❤️ (This stat will probably
         seem more impressive years down the line.)
       {line_break()}
@@ -138,24 +153,29 @@ def send_email(user, playlist_id_map, errors):
         😶‍🌫️😶‍🌫️😶‍🌫️...
       {line_break()}
     </p>
+    {line_break()}
     <p>
       This is your greatest hits playlist, filled with songs you demonstrably
       are/were obsessed with at some point in your life. It’s updated by your
-      listening, I’m just a middleman. Unfortunately, your playlist is created
-      by my account (or else I’d need to ask for your Spotify username and
-      password), but you can still click “{bold("Add to Profile")}” so it shows
-      up on yours.
+      listening from {bold("now until the end of time")}.
     </p>
     <p>
-      If you have any questions, please contact me at {GMAIL_PERSONAL_EMAIL} or
-      {link("read the docs", "https://github.com/yayabosh/your-greatest-hits")}.
+      Unfortunately, your playlist must be created by my account (or else I’d
+      need to ask for your Spotify username and password), but you can still
+      click “{bold("Add to Profile")}” so it shows up on yours.
+    </p>
+    <p>
+      If you have any questions or feedback, please contact me at
+      {GMAIL_PERSONAL_EMAIL} or
+      {link("read the docs", "https://github.com/yayabosh/your-greatest-hits")}
+      (which are in the process of being written).
     </p>
     <p>
       Happy listening,
       {line_break()}
       Abosh
       {line_break()}
-<pre>
+      <pre>
  _                             
 | |                            
 | |__   __ _ _ __  _ __  _   _ 
@@ -180,7 +200,16 @@ def send_email(user, playlist_id_map, errors):
 |_|_| |_|\__, |                
           __/ |                
          |___/  
-         </pre>               
+      </pre>               
+    </p>
+    <p>
+      True Fact: this automated email cost me {bold("$1.00")} to send. If you want
+      to show your appreciation, please consider paying me this amount 😊 (Feel free
+      to exceed this amount as well.) Venmo: @yayabosh
+    </p>
+    <p>
+      I’m just kidding! This project has no budget! At least until my roommate
+      realizes he’s the one paying for the AWS server... Ivan don’t read this 😃👍
     </p>
   </body>
 </html>
@@ -199,3 +228,53 @@ def send_email(user, playlist_id_map, errors):
     with smtplib.SMTP_SSL("smtp.gmail.com", port=465, context=context) as server:
         server.login(sender_email, password)
         server.sendmail(sender_email, receiver_email, message.as_string())
+
+
+def get_update_summary(playlist_id_map):
+    summary = ""
+    for playlist_id, (threshold, new_tracks) in playlist_id_map.items():
+        playlist_title = f"Songs You’ve Listened To {threshold}+ Times"
+        summary += f"""{bold(link(playlist_title, playlist_id_to_link(playlist_id)))}
+                       {line_break()}"""
+        summary += f"{get_new_songs(new_tracks)}{line_break()}"
+
+    return summary
+
+
+def get_new_songs(new_tracks):
+    if not new_tracks:
+        return f"""😔 {italicize(
+          'No new additions this month. Keep listening, and you’ll see more soon!'
+        )}{line_break()}"""
+
+    result = f"🔥 {italicize('Woohoo, you’ve got updates!')}{line_break()}"
+    result += f"""The following 
+                  {'song was' if len(new_tracks) == 1 else 'songs were'} 
+                  added:{line_break()}"""
+    count = 0
+    for (song, artist) in new_tracks:
+        if count == 15:
+            result += f"and {bold(len(new_tracks) - count)} more...{line_break()}"
+            break
+
+        result += f"- “{bold(song)}” by {bold(artist)}{line_break()}"
+        count += 1
+
+    return result
+
+
+def get_non_added_songs(errors, PLURAL_PLAYLIST):
+    if not errors:
+        return f"""This month, {bold('all songs were added successfully!')}
+                  That means you shouldn’t be missing any songs in your playlist.
+                  But {bold('you should still check your playlist for songs that shouldn’t be there')}.
+                  Keep reading this section for more info."""
+
+    PLURAL_SONG = "this song" if len(errors) == 1 else "these songs"
+    result = f"""☹️ This month, {PLURAL_SONG} couldn’t be added to your
+                 {PLURAL_PLAYLIST}:{line_break()}"""
+    for (song, artist) in errors:
+        result += f"- “{bold(song)}” by {bold(artist)}{line_break()}"
+
+    result += f"{line_break()}Keep reading this section for info on why that might have happened."
+    return result
