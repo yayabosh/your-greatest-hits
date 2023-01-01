@@ -19,6 +19,7 @@ class User(NamedTuple):
     last_fm_username: str  # Example: "yayabosh"
     thresholds: List[int]  # Example: 100
     moniker: str  # Example: "Abosh Has", so the Spotify playlist will be named "Songs {Abosh Has} Listened To 100+ Times"
+    month_joined: int  # Example: 0 for first month, 1 for second month, etc.
 
 
 # Get users from users.csv and create a list of User objects
@@ -36,6 +37,7 @@ with open("tables/users.csv", newline="") as f:
                 row["last_fm_username"],
                 sorted([int(threshold) for threshold in thresholds], reverse=True),
                 row["moniker"],
+                int(row["month_joined"]),
             )
         )
 
@@ -58,14 +60,15 @@ for user in users:
         if playlist_id is None:
             playlist_id = create_playlist(user, threshold)
 
-        # Update the playlist with the the tracks played more than the given
-        # threshold
+        # Update the playlist with the the tracks played more than the given threshold.
         new_tracks = update_playlist(playlist_id)
 
-        # Map the playlist ID to a tuple containing the threshold and the songs
-        # in the playlist. This will be used when sending an email to the user.
+        # Map the playlist ID to a tuple containing the threshold and the new
+        # songs in the playlist. This will be used when sending an email to the user.
         playlist_id_map[playlist_id] = (threshold, new_tracks)
 
     # Send an update email to the user
     if not DEBUG:
         send_email(user, playlist_id_map, errors)
+
+    errors = set()
