@@ -46,8 +46,5 @@ literal_matches = {
         "S.II.S (Soul To Soul)",
         "S.E.S.",
     ): "5jM2ITcV8idbVEjhgm52Dd",
-    (
-        "BRASILIAN SKIES",
-        "高中正義"
-    ): "3bMc9oRaUWnojCrYTUXXcQ"
+    ("BRASILIAN SKIES", "高中正義"): "3bMc9oRaUWnojCrYTUXXcQ",
 }
