@@ -47,4 +47,12 @@ literal_matches = {
         "S.E.S.",
     ): "5jM2ITcV8idbVEjhgm52Dd",
     ("BRASILIAN SKIES", "高中正義"): "3bMc9oRaUWnojCrYTUXXcQ",
+    ("Disrespectful", "21 Savage, Offset & Metro Boomin"): "3oxCefEI6Tc6Z6t20J4IvH",
+    ("Real Friends", "Kanye West"): "66Q3fAmSX5eHamgbKa9alP",
+    ("aisatsana [102]", "Aphex Twin"): "3ESsjKqrj3M79I8sSZieK3",
+    ("All the Sudden", "Lil Pump"): "3cj95iGe8aqvL5iGl6o0R9",
+    ("No Security", "Skepta"): "5gm3fp5ymJlj73v03vO8h8",
+    ("Otis", "JAY-Z"): "0nLcWJB4ir9430ulKxZZhV",
+    ("Gin N Juice (feat. Dat Nigga Daz)", "Snoop Dogg"): "7sPt2cfrg7DrVP52zfvS1i",
+    ("L.E.S.", "Childish Gambino"): "0YsGMHid6sFq5PcToe3JZE"
 }
