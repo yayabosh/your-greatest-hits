@@ -54,5 +54,15 @@ literal_matches = {
     ("No Security", "Skepta"): "5gm3fp5ymJlj73v03vO8h8",
     ("Otis", "JAY-Z"): "0nLcWJB4ir9430ulKxZZhV",
     ("Gin N Juice (feat. Dat Nigga Daz)", "Snoop Dogg"): "7sPt2cfrg7DrVP52zfvS1i",
-    ("L.E.S.", "Childish Gambino"): "0YsGMHid6sFq5PcToe3JZE"
+    ("L.E.S.", "Childish Gambino"): "0YsGMHid6sFq5PcToe3JZE",
+    ("Gotta Have It", "JAY-Z"): "6JFLZH9vCzgqnUToBdiHQb",
+    ("Outside Today", "YoungBoy Never Broke Again"): "3sA7HKGzcKTVscdiTCrWpX",
+    ("Stop It", "FISHER"): "4qetR2UUyBeUrJ9DbYrpVQ",
+    ("GUMMO", "6ix9ine"): "4HbiCvH1R7mVOJ7KY7JQBD",
+    ("My Shadow", "Promiseland"): "1kHY05OYNqmkQmeq02t36X",
+    ("난로 마냥 Question Mark", "Suzy"): "32nk0zso1X9pWUxxKM03pV",
+    ("Insecure", "BILLY BUEFFER"): "1jxGu8r85Wj4VxfMcsfNBe",
+    ("Tell Me", "Era"): "0WUEI3wb6ei1gRvCJChfxA",
+    ("alexandria - slowed", "myclownshoes"): "3gCUAa67kcVxX7Mt24ZPhN",
+    ("4:38am (feat. Barrie)", "Ford."): "778rI4lJeJKKy34mAeq4KA",
 }
